@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: kafka-test1
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/testdb
+    username: tedd
+    password: Welcome1
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  mybatis:
+    mapper-locations: classpath:mapper/*.xml
+    config-location: classpath:mybatis-config.xml
+    configuration:
+      default-statement-timeout: 30
+      map-underscore-to-camel-case: false
+      jdbc-type-for-null: varchar
+      call-setters-on-nulls: true
+      auto-mapping-unknown-column-behavior: none
