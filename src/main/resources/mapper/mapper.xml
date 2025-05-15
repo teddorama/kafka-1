@@ -7,4 +7,9 @@
     <select id="getAllProductList" resultType="product">
         SELECT * FROM PRODUCT_CATALOG;
     </select>
+    <insert id="insertProduct" parameterType="product">
+        INSERT INTO PRODUCT_CATALOG
+            (productName, productDesc) VALUES
+            (#{productName}, #{productDesc})
+    </insert>
 </mapper>

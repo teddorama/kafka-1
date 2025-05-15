@@ -1,5 +1,6 @@
 package com.example.test1.controller;
 
+import com.example.test1.config.Config;
 import com.example.test1.dto.Product;
 import com.example.test1.service.KafkaProducerService;
 import com.example.test1.service.ProductService;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
@@ -19,18 +23,35 @@ public class ProductController {
     ProductService productService;
     private final KafkaProducerService kafkaProducerService;
 
-    private long id = 0;
-
     @GetMapping
     public String sample() {
         return "Sample~";
     }
 
-    @GetMapping("/send/{productName}/{productDesc}")
-    public void send(@PathVariable String productName, @PathVariable String productDesc) {
-        Product product = new Product(id++, productName, productDesc);
+    //DB 단건 Insert
+    @GetMapping("/senddb/{productName}/{productDesc}")
+    public void sendDb(@PathVariable String productName, @PathVariable String productDesc) {
+        Product product = new Product(0L, productName, productDesc);
 
-        kafkaProducerService.send("testTopic1", product);
+        productService.insertProduct(product);
+    }
+
+
+
+    //Kafka 단건 Insert
+    @GetMapping("/send/{productName}/{productDesc}")
+    public void sendKafka(@PathVariable String productName, @PathVariable String productDesc) {
+        Product product = new Product(0L, productName, productDesc);
+
+        kafkaProducerService.send(Config.PRODUCT_TOPIC, product);
+    }
+
+    //Kafka Bulk Insert
+    @GetMapping("/bulksend/{productName}/{productDesc}")
+    public void bulksendKafka(@PathVariable String productName, @PathVariable String productDesc) {
+        Product product = new Product(0L, productName, productDesc);
+
+        kafkaProducerService.send(Config.BULK_PRODUCT_TOPIC, product);
     }
 
     @GetMapping("/get")

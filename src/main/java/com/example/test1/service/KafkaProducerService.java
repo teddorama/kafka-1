@@ -32,7 +32,7 @@ public class KafkaProducerService {
         // JSON 문자열을 해당 topic에 전달
         kafkaTemplate.send(topic, jsonInString);
 
-        System.out.println("Kafka Producer sent data from the product micro service " + product);
+//        System.out.println("Kafka Producer sent data from the product micro service " + product);
 
     }
 }
