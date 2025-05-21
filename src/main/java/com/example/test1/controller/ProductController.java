@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
@@ -25,7 +22,10 @@ public class ProductController {
 
     @GetMapping
     public String sample() {
-        return "Sample~";
+        Config.START_FLAG = true;
+        productService.initIterationCount();
+
+        return "Start Flag init completed!";
     }
 
     //DB 단건 Insert
@@ -35,8 +35,6 @@ public class ProductController {
 
         productService.insertProduct(product);
     }
-
-
 
     //Kafka 단건 Insert
     @GetMapping("/send/{productName}/{productDesc}")
@@ -58,6 +56,5 @@ public class ProductController {
     public String get() {
         return productService.getAllProductList().toString();
     }
-
 
 }

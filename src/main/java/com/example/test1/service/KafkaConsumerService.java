@@ -30,9 +30,9 @@ public class KafkaConsumerService {
     public void test(ConsumerRecord<String, String> data, Acknowledgment acknowledgment, Consumer<String, String> consumer) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Product product = mapper.readValue(data.value(), Product.class);
-//        System.out.println("Consume : " + Config.PRODUCT_TOPIC + " : " + product.toString());
 
         productService.insertProduct(product);
+
         acknowledgment.acknowledge();
     }
 
@@ -41,15 +41,13 @@ public class KafkaConsumerService {
     public void test2(ConsumerRecord<String, String> data, Acknowledgment acknowledgment, Consumer<String, String> consumer) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Product product = mapper.readValue(data.value(), Product.class);
-//        System.out.println("Consume : " + Config.BULK_PRODUCT_TOPIC + " : " + product.toString());
 
         productList.add(product);
         if (productList.size() >= Config.BATCH_SIZE) {
-            System.out.println("Batch : " + productList.toString());
 
             productService.insertBulkProduct(productList);
-            productList.clear();
 
+            productList.clear();
             acknowledgment.acknowledge(); // 여기서 다른 topic 전송 - reids session id + 주문번호 + 성공여부 등
         }
     }
