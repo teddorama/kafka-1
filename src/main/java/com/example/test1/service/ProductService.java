@@ -2,8 +2,9 @@ package com.example.test1.service;
 
 import com.example.test1.config.Config;
 import com.example.test1.dto.Product;
-import com.example.test1.mapper.ProductMapper;
+import com.example.test1.repository.ProductMapper;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +14,10 @@ import java.util.List;
 @Service
 public class ProductService {
     @Autowired
-    ProductMapper productMapper;
+    private ProductMapper productMapper;
+
+    @Autowired
+    private RedisCustomService redisCustomService;
 
     private int iterationCount;
     private int insertOneCount;
@@ -39,13 +43,18 @@ public class ProductService {
         }
 
         insertOneProduct(product);
+        redisCustomService.insertReply(product);
         insertOneCount++;
+
+//        redisCustomService.waitReply(product.getProductDesc());
 
         if (insertOneCount >= Config.BATCH_SIZE) {
             Config.printTime("Insert One Completed - " + iterationCount + " : ", insertOneCount);
             insertOneCount = 0;
             iterationCount++;
         }
+
+
     }
 
     @Transactional
@@ -59,6 +68,7 @@ public class ProductService {
 
         for (Product product : productList) {
             productMapper.insertProduct(product);
+            redisCustomService.insertReply(product);
         }
 
         Config.printTime("Bulk Insert Completed - " + iterationCount + " : ", productList.size());

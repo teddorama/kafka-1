@@ -8,7 +8,7 @@ public class Config {
     public static final String PRODUCT_TOPIC = "ProductTopic";
     public static final String BULK_PRODUCT_TOPIC = "BulkProductTopic";
 
-    public static final int BATCH_SIZE = 1000;
+    public static final int BATCH_SIZE = 100;
     public static boolean START_FLAG = true;
 
     public static void printTime(String message, int count) {

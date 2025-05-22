@@ -4,6 +4,8 @@ import com.example.test1.config.Config;
 import com.example.test1.dto.Product;
 import com.example.test1.service.KafkaProducerService;
 import com.example.test1.service.ProductService;
+import com.example.test1.service.RedisCustomService;
+import com.example.test1.service.RedisProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +22,8 @@ public class ProductController {
     ProductService productService;
     private final KafkaProducerService kafkaProducerService;
 
+    private final RedisCustomService redisCustomService;
+
     @GetMapping
     public String sample() {
         Config.START_FLAG = true;
@@ -34,6 +38,7 @@ public class ProductController {
         Product product = new Product(0L, productName, productDesc);
 
         productService.insertProduct(product);
+        redisCustomService.waitReply(product.getProductDesc());
     }
 
     //Kafka 단건 Insert
@@ -50,11 +55,17 @@ public class ProductController {
         Product product = new Product(0L, productName, productDesc);
 
         kafkaProducerService.send(Config.BULK_PRODUCT_TOPIC, product);
+        redisCustomService.waitReply(product.getProductDesc());
     }
 
     @GetMapping("/get")
     public String get() {
         return productService.getAllProductList().toString();
+    }
+
+    @GetMapping("/get/redis/{id}")
+    public String getRedis(@PathVariable String id) {
+        return redisCustomService.read(id);
     }
 
 }
